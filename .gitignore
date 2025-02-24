@@ -17,6 +17,8 @@
 # Allow example environment file
 !.env.example*
 
+/data/*
+
 # Other
 temp*.csv
 */_build/

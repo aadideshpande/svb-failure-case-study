@@ -121,6 +121,7 @@ def create_dirs():
     ## If they don't exist, create the _data and _output directories
     d["DATA_DIR"].mkdir(parents=True, exist_ok=True)
     d["OUTPUT_DIR"].mkdir(parents=True, exist_ok=True)
+    (d["DATA_DIR"] / 'pulled').mkdir(parents=True, exist_ok=True)
     # (d["BASE_DIR"] / "_docs").mkdir(parents=True, exist_ok=True)
 
 
