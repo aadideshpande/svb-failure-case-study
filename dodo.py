@@ -245,6 +245,53 @@ def task_pull_RCON_RCOA():
         # case WRDS asks for credentials.
     }
 
+def task_pull_treasuries_data():
+    """Pull S&P U.S. Treasury Bond Index data from WRDS and save to disk"""
+    file_dep = [
+        "./src/settings.py",
+        "./src/pull_treasuries_data.py",
+    ]
+    targets = [
+        Path(DATA_DIR) / "pulled" / "SP_Treasury_Bond_Index.parquet"
+    ]
+
+    return {
+        "actions": [
+            "ipython src/settings.py",
+            "ipython src/pull_treasuries_data.py",
+        ],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+        "verbosity": 2,
+        # Print everything immediately. This is important in case WRDS asks for credentials.
+    }
+
+
+def task_pull_MBB_data():
+    """Pull iShares MBS ETF (MBB) data and save to disk"""
+    
+    file_dep = [
+        "./src/settings.py",
+        "./src/pull_mbb_data.py",
+    ]
+    
+    targets = [
+        Path(config("DATA_DIR")) / "pulled" / "MBB_data.parquet"
+    ]
+
+    return {
+        "actions": [
+            "ipython src/settings.py",
+            "ipython src/pull_mbb_data.py",
+        ],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+        "verbosity": 2,
+        # Print everything immediately in case any manual input is needed.
+    }
+
 
 # def task_chart_repo_rates():
 #     """Example charts for Chart Book"""

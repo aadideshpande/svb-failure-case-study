@@ -18,6 +18,7 @@
 !.env.example*
 
 /data/*
+!/data/manual/
 
 # Other
 temp*.csv
