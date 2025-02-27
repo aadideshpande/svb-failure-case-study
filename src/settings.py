@@ -74,6 +74,7 @@ d["START_DATE"] = _config("START_DATE", default="1913-01-01", cast=to_datetime)
 d["END_DATE"] = _config("END_DATE", default="2024-01-01", cast=to_datetime)
 d["PIPELINE_DEV_MODE"] = _config("PIPELINE_DEV_MODE", default=True, cast=bool)
 d["PIPELINE_THEME"] = _config("PIPELINE_THEME", default="pipeline")
+d["USE_YFINANCE"] = _config("USE_YFINANCE", default=False)
 
 ## Paths
 d["DATA_DIR"] = if_relative_make_abs(_config('DATA_DIR', default=Path('_data'), cast=Path))
