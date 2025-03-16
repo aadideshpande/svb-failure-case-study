@@ -168,6 +168,51 @@ def save_as_parquet(data, path):
     except Exception as e:
         print(f"⚠️ Failed to save as Parquet: {e}")
 
+
+def pull_SP_Treasury_Bond_Index_investpy(start_date="01/01/2022", end_date=None):
+    """
+    Pulls S&P U.S. Treasury Bond Index data using Investpy.
+
+    Args:
+        start_date (str): Start date for data retrieval in 'DD/MM/YYYY' format.
+        end_date (str, optional): End date for data retrieval in 'DD/MM/YYYY' format.
+
+    Returns:
+        pd.DataFrame: DataFrame containing:
+            - date: Date of the index.
+            - index_value: The value of the index.
+            - return: Daily returns.
+            - yield_to_worst: Placeholder (set to NaN).
+        Returns None if data retrieval fails.
+    """
+    if end_date is None:
+        end_date = pd.Timestamp.today().strftime("%d/%m/%Y")
+    
+    try:
+        # Attempt to retrieve data from Investpy
+        df = investpy.get_index_historical_data(index="S&P U.S. Treasury Bond Index", 
+                                                country="united states",
+                                                from_date=start_date, 
+                                                to_date=end_date)
+
+        if df.empty:
+            print("⚠️ No data found for S&P Treasury Bond Index from Investpy.")
+            return None
+
+        df.reset_index(inplace=True)
+        df.rename(columns={"Close": "index_value"}, inplace=True)
+        df["return"] = df["index_value"].pct_change()
+        df["yield_to_worst"] = pd.NA
+        treasury_data = df[["Date", "index_value", "return", "yield_to_worst"]].copy()
+        treasury_data.rename(columns={"Date": "date"}, inplace=True)
+
+        print("✅ Successfully pulled S&P Treasury Bond Index data from Investpy.")
+        return treasury_data
+    except Exception as e:
+        print(f"⚠️ Investpy data pull failed: {e}")
+        return None
+
+
 def load_SP_Treasury_Bond_Index(data_dir=DATA_DIR):
     """
     Loads the saved S&P Treasury Bond Index data from a Parquet file.
@@ -188,6 +233,11 @@ if __name__ == "__main__":
     # If WRDS fails, try pulling data from Investpy
     if treasury_data is None:
         print("🔄 Attempting to pull Treasury Bond Index data from Investpy...")
+        treasury_data = pull_SP_Treasury_Bond_Index_investpy()
+
+    # If WRDS fails, try pulling data from Yahoo
+    if treasury_data is None:
+        print("🔄 Attempting to pull Treasury Bond Index data from Yahoo...")
         treasury_data = pull_SP_Treasury_Bond_Index_yahoo()
 
     # If Yahoo Finance fails, try loading from a manual Excel file
