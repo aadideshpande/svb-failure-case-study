@@ -1,5 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from settings import config
+from pathlib import Path
+OUTPUT_DIR = Path(config("OUTPUT_DIR"))
 
 def missing_data_analysis(dfs, dataset_names=None, show_plot=True):
     """
@@ -46,6 +49,9 @@ def missing_data_analysis(dfs, dataset_names=None, show_plot=True):
             ax.grid(axis="y", linestyle="--", alpha=0.7)
 
         plt.tight_layout()
+        # 
+        filename = OUTPUT_DIR / 'missing_data.png'
+        plt.savefig(filename)
         plt.show()
 
 def clean_sp_treasury_data(sp_treasury_data):
@@ -212,3 +218,45 @@ def get_partitioned_data(df, gsib, large, small):
     df_large = df[df['rssd9001'].isin(large)]
     df_small = df[df['rssd9001'].isin(small)]
     return df_gsib, df_large, df_small
+
+def rename_etf_mbs_columns(df):
+    """
+    Flatten a MultiIndex column structure where columns look like
+    ('Close','MBB'), ('Date',''), etc. The function returns a DataFrame
+    whose columns are single-level strings, e.g. "Close_MBB" or "Date".
+    """
+    # Map each tuple in df.columns to a single string
+    df.columns = [
+        f"{col[0]}_{col[1]}" if col[1] else col[0]
+        for col in df.columns
+    ]
+    return df
+
+def missing_values_percentage(df):
+    """
+    Calculate the percentage of missing values in each column, 
+    sort them in descending order, and plot the top 10 columns.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+
+    Returns:
+        None
+    """
+    # Calculate percentage of missing values
+    missing_percent = (df.isnull().sum() / len(df)) * 100
+
+    # Sort in descending order
+    missing_percent_sorted = missing_percent[missing_percent > 0].sort_values(ascending=False)
+
+    # Plot the top 10 columns with missing values
+    plt.figure(figsize=(15, 3))
+    missing_percent_sorted[:10].plot(kind='bar', color='red', edgecolor='black')
+    plt.title('Top 10 Columns with Missing Values (%)')
+    plt.ylabel('Percentage')
+    plt.xlabel('Columns')
+    plt.xticks(rotation=45)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    filename = OUTPUT_DIR / 'wrds_premium_data.png'
+    plt.savefig(filename)
+    plt.show()

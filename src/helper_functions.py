@@ -1,5 +1,9 @@
 import numpy as np
 import pandas as pd
+from settings import config
+from pathlib import Path
+OUTPUT_DIR = Path(config("OUTPUT_DIR"))
+
 def get_etf_mbs_change(etf_mbs,start_date = "03/31/2022",end_date = "03/31/2023" ):
     etf_mbs_change = etf_mbs.loc[etf_mbs['Date'] == end_date, 'Close/Last'].values[0] /etf_mbs.loc[etf_mbs['Date'] == start_date, 'Close/Last'].values[0] - 1
     return etf_mbs_change
@@ -215,3 +219,23 @@ def final_statistic_table(bank_losses_assets, uninsured_deposit_mm_asset, insure
     final_stats = final_stats.T
     
     return final_stats
+
+import pandas as pd
+
+def save_dataframe_as_latex_table_1(df, filename="table_1.tex", caption="Table Caption", label="tab:example"):
+    """
+    Convert a Pandas DataFrame to a LaTeX table and save it to a file.
+    
+    Parameters:
+    df (pd.DataFrame): The DataFrame to convert.
+    filename (str): The output .tex file name.
+    caption (str): The caption for the LaTeX table.
+    label (str): The label for referencing the table in LaTeX.
+    """
+    latex_code = df.to_latex(index=True, caption=caption, label=label, column_format="lcccc", escape=False)
+    
+    with open(OUTPUT_DIR / filename, "w") as f:
+        f.write(latex_code)
+    
+    print(f"LaTeX table saved as {filename}")
+

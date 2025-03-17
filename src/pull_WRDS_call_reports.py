@@ -34,6 +34,8 @@ from pathlib import Path
 import pandas as pd
 import wrds
 from pandas.tseries.offsets import MonthEnd
+import data_preprocessing
+import datetime
 from settings import config
 
 # Load configuration settings
@@ -374,23 +376,36 @@ def load_wrds_call_research(data_dir=DATA_DIR):
     Returns:
         pd.DataFrame: DataFrame loaded from the 'wrds_call_research.parquet' file.
     """
+    path = Path(data_dir) / "manual"
+    filtered_path = path / "wrds_call_research_filtered.parquet"
+    original_path = path / "wrds_call_research.parquet"
+    if filtered_path.exists():
+        return pd.read_parquet(filtered_path)
+    if original_path.exists():
+        print("Filtered data does not exist......we create the new parquet file")
+        df = pd.read_parquet(original_path)
+        start_date = datetime.date(2022, 3, 31)
+        end_date = datetime.date.today()
+        filtered_df = data_preprocessing.filter_data(df, start_date, end_date)
+        filtered_df.to_parquet(filtered_path)
+        return filtered_df
     path = Path(data_dir) / "manual" / "wrds_call_research.parquet"
-    comp = pd.read_parquet(path)
+    comp = pd.read_parquet(filtered_path)
     return comp
 
 if __name__ == "__main__":
     print("Pulling data....")
-    rcon_series_1  = pull_RCON_series_1(wrds_username=WRDS_USERNAME)
-    rcon_series_1.to_parquet(DATA_DIR / "pulled" / "RCON_Series_1.parquet")
+    # rcon_series_1  = pull_RCON_series_1(wrds_username=WRDS_USERNAME)
+    # rcon_series_1.to_parquet(DATA_DIR / "pulled" / "RCON_Series_1.parquet")
 
-    rcon_series_2 = pull_RCON_series_2(wrds_username=WRDS_USERNAME)
-    rcon_series_2.to_parquet(DATA_DIR / "pulled" / "RCON_Series_2.parquet")
+    # rcon_series_2 = pull_RCON_series_2(wrds_username=WRDS_USERNAME)
+    # rcon_series_2.to_parquet(DATA_DIR / "pulled" / "RCON_Series_2.parquet")
   
-    rcfd_series_1 = pull_RCFD_series_1(wrds_username=WRDS_USERNAME)
-    rcfd_series_1.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_1.parquet")
+    # rcfd_series_1 = pull_RCFD_series_1(wrds_username=WRDS_USERNAME)
+    # rcfd_series_1.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_1.parquet")
 
-    rcfd_series_2 = pull_RCFD_series_2(wrds_username=WRDS_USERNAME)
-    rcfd_series_2.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_2.parquet")
+    # rcfd_series_2 = pull_RCFD_series_2(wrds_username=WRDS_USERNAME)
+    # rcfd_series_2.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_2.parquet")
     
-    bhck1975_data = pull_BHCK1975(wrds_username=WRDS_USERNAME)
-    bhck1975_data.to_parquet(DATA_DIR / "pulled" / "BHCK1975.parquet")
+    # bhck1975_data = pull_BHCK1975(wrds_username=WRDS_USERNAME)
+    # bhck1975_data.to_parquet(DATA_DIR / "pulled" / "BHCK1975.parquet")
