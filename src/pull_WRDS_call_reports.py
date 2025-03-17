@@ -395,17 +395,17 @@ def load_wrds_call_research(data_dir=DATA_DIR):
 
 if __name__ == "__main__":
     print("Pulling data....")
-    # rcon_series_1  = pull_RCON_series_1(wrds_username=WRDS_USERNAME)
-    # rcon_series_1.to_parquet(DATA_DIR / "pulled" / "RCON_Series_1.parquet")
+    rcon_series_1  = pull_RCON_series_1(wrds_username=WRDS_USERNAME)
+    rcon_series_1.to_parquet(DATA_DIR / "pulled" / "RCON_Series_1.parquet")
 
-    # rcon_series_2 = pull_RCON_series_2(wrds_username=WRDS_USERNAME)
-    # rcon_series_2.to_parquet(DATA_DIR / "pulled" / "RCON_Series_2.parquet")
+    rcon_series_2 = pull_RCON_series_2(wrds_username=WRDS_USERNAME)
+    rcon_series_2.to_parquet(DATA_DIR / "pulled" / "RCON_Series_2.parquet")
   
-    # rcfd_series_1 = pull_RCFD_series_1(wrds_username=WRDS_USERNAME)
-    # rcfd_series_1.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_1.parquet")
+    rcfd_series_1 = pull_RCFD_series_1(wrds_username=WRDS_USERNAME)
+    rcfd_series_1.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_1.parquet")
 
-    # rcfd_series_2 = pull_RCFD_series_2(wrds_username=WRDS_USERNAME)
-    # rcfd_series_2.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_2.parquet")
+    rcfd_series_2 = pull_RCFD_series_2(wrds_username=WRDS_USERNAME)
+    rcfd_series_2.to_parquet(DATA_DIR / "pulled" / "RCFD_Series_2.parquet")
     
-    # bhck1975_data = pull_BHCK1975(wrds_username=WRDS_USERNAME)
-    # bhck1975_data.to_parquet(DATA_DIR / "pulled" / "BHCK1975.parquet")
+    bhck1975_data = pull_BHCK1975(wrds_username=WRDS_USERNAME)
+    bhck1975_data.to_parquet(DATA_DIR / "pulled" / "BHCK1975.parquet")

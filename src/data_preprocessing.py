@@ -4,6 +4,7 @@ from settings import config
 from pathlib import Path
 OUTPUT_DIR = Path(config("OUTPUT_DIR"))
 
+
 def missing_data_analysis(dfs, dataset_names=None, show_plot=True):
     """
     Analyze missing data for multiple DataFrames.
@@ -260,3 +261,4 @@ def missing_values_percentage(df):
     filename = OUTPUT_DIR / 'wrds_premium_data.png'
     plt.savefig(filename)
     plt.show()
+
