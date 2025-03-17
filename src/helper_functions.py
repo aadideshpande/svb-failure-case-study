@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from settings import config
 from pathlib import Path
 OUTPUT_DIR = Path(config("OUTPUT_DIR"))
@@ -238,4 +239,69 @@ def save_dataframe_as_latex_table_1(df, filename="table_1.tex", caption="Table C
         f.write(latex_code)
     
     print(f"LaTeX table saved as {filename}")
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def save_stacked_bar_chart(asset_series, liability_series, filename="stacked_bar_chart.png"):
+    """
+    Generates and saves a stacked horizontal bar chart for assets and liabilities.
+
+    Args:
+        asset_series (pd.Series): Pandas Series containing asset categories and values.
+        liability_series (pd.Series): Pandas Series containing liability categories and values.
+        filename (str): File path to save the generated image.
+
+    Returns:
+        None (Saves the image to the specified file).
+    """
+    # Define colors for each category
+    asset_colors = ['#1f4e79', '#6ea3d1', '#91c1e7', '#a4d3f0', '#c0c8d6']
+    liability_colors = ['#c0392b', '#e67e22', '#e9a178', '#fbe9d0']
+
+    # Create a figure with two horizontal bar charts
+    fig, axes = plt.subplots(2, 1, figsize=(8, 6))
+
+    # Plot stacked horizontal bar for assets
+    bottoms = 0  # Initialize bottom placement
+    for i, (label, value, color) in enumerate(zip(asset_series.index, asset_series, asset_colors)):
+        axes[0].barh("Total Assets", value, left=bottoms, color=color, edgecolor='black', label=label)
+        bottoms += value
+
+    # Add labels inside each asset section
+    bottoms = 0
+    for i, (label, value) in enumerate(zip(asset_series.index, asset_series)):
+        x_position = bottoms + value / 2
+        axes[0].text(x_position, 0, f"{label}\n{value/1e9:.2f}B", va='center', ha='center', fontsize=10, fontweight='bold', color='white')
+        bottoms += value
+
+    # Plot stacked horizontal bar for liabilities
+    bottoms = 0  # Initialize bottom placement
+    for i, (label, value, color) in enumerate(zip(liability_series.index, liability_series, liability_colors)):
+        axes[1].barh("Total Liabilities", value, left=bottoms, color=color, edgecolor='black', label=label)
+        bottoms += value
+
+    # Add labels inside each liability section
+    bottoms = 0
+    for i, (label, value) in enumerate(zip(liability_series.index, liability_series)):
+        x_position = bottoms + value / 2
+        axes[1].text(x_position, 0, f"{label}\n{value/1e9:.2f}B", va='center', ha='center', fontsize=10, fontweight='bold', color='white')
+        bottoms += value
+
+    # Formatting
+    axes[0].set_title("Aggregate Assets", fontsize=12, fontweight="bold", loc='left')
+    axes[0].set_xlabel("Total (in Billions)")
+    axes[0].set_yticks([])  # Remove y-axis ticks
+    axes[0].legend(loc="upper right")
+
+    axes[1].set_title("Aggregate Liabilities", fontsize=12, fontweight="bold", loc='left')
+    axes[1].set_xlabel("Total (in Billions)")
+    axes[1].set_yticks([])  # Remove y-axis ticks
+    axes[1].legend(loc="upper right")
+
+    # Save the plot as an image
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / filename, dpi=300, bbox_inches="tight")
+    plt.close()
+
 

@@ -127,10 +127,9 @@ def load_MBB_data(data_dir=DATA_DIR):
 
 if __name__ == "__main__":
     # Determine whether to use Yahoo Finance or the manual file based on config
-    if USE_YFINANCE:
-        print("🔄 Using Yahoo Finance to fetch MBB data...")
-        mbb_data = pull_MBB_data()
-    else:
+    print("🔄 Using Yahoo Finance to fetch MBB data...")
+    mbb_data = pull_MBB_data()
+    if mbb_data is None:
         print("🔄 Using manual file from /data/manual to fetch MBB data...")
         mbb_data = load_from_manual_csv()
 

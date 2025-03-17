@@ -97,21 +97,7 @@ To compare our replicated results with the original paper, we present the origin
 \end{figure}
 
 \subsection{Replicated Table 1A (Our Computed Results)}
-\begin{table}[H]
-    \centering
-    \caption{Replicated Table 1A: Bank Balance Sheets (Q1 2022)}
-    \begin{tabular}{lcccc}
-        \toprule
-        & Aggregate & Small Banks & Large Banks (non-GSIB) & GSIB Banks \\
-        \midrule
-        Total Assets (in Trillions) & 24.0 & 5.0 & 8.7 & 370.0 \\
-        Cash (\%) & 14.1 & 13.6 & 10.0 & 19.4 \\
-        Security (\%) & 25.2 & 24.3 & 21.5 & 19.3 \\
-        Loans (\%) & 46.6 & 54.7 & 62.0 & 46.5 \\
-        Number of Banks & 4,844 & 4,090 & 710 & 44 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+\input{\PathToOutput/replicated_table_1A.tex}
 
 \subsection{Original Figure 1A (Extracted from Paper)}
 \begin{figure}[H]
@@ -120,12 +106,12 @@ To compare our replicated results with the original paper, we present the origin
     \caption{Original Figure 1A from Research Paper.}
 \end{figure}
 
-% \subsection{Replicated Figure 1A (Our Computed Results)}
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{\PathToOutput/figure_a1.png}
-%     \caption{Replicated Figure 1A: Aggregate Bank Assets and Liabilities.}
-% \end{figure}
+\subsection{Replicated Figure 1A (Our Computed Results)}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{\PathToOutput/assets_liabilities_chart.png}
+    \caption{Replicated Figure 1A: Aggregate Bank Assets and Liabilities.}
+\end{figure}
 
 \section{Conclusion}
 This report details the steps taken to replicate key tables and figures from the referenced research paper. We successfully reconstructed the asset composition tables and market-price impact of Fed tightening, ensuring consistency with the original methodology. Differences between our replicated results and the original findings may stem from data availability, methodological nuances, or market fluctuations since the original study.

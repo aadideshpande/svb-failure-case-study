@@ -254,6 +254,10 @@ notebook_tasks = {
         "file_dep": [],
         "targets": [],
     },
+    "table_a1_replication.ipynb": {
+        "file_dep": [],
+        "targets": [],
+    },
 }
 
 def task_convert_notebooks_to_scripts():
