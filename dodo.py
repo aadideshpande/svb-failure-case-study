@@ -115,107 +115,6 @@ def task_config():
         "clean": [],
     }
 
-
-# def task_pull_fred():
-#     """ """
-#     file_dep = [
-#         "./src/settings.py",
-#         "./src/pull_fred.py",
-#         "./src/pull_ofr_api_data.py",
-#     ]
-#     targets = [
-#         DATA_DIR / "fred.parquet",
-#         DATA_DIR / "ofr_public_repo_data.parquet",
-#     ]
-
-#     return {
-#         "actions": [
-#             "ipython ./src/settings.py",
-#             "ipython ./src/pull_fred.py",
-#             "ipython ./src/pull_ofr_api_data.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": [],  # Don't clean these files by default. The ideas
-#         # is that a data pull might be expensive, so we don't want to
-#         # redo it unless we really mean it. So, when you run
-#         # doit clean, all other tasks will have their targets
-#         # cleaned and will thus be rerun the next time you call doit.
-#         # But this one wont.
-#         # Use doit forget --all to redo all tasks. Use doit clean
-#         # to clean and forget the cheaper tasks.
-#     }
-
-
-##############################$
-## Demo: Other misc. data pulls
-##############################$
-# def task_pull_other():
-#     """ """
-#     file_dep = [
-#         "./src/pull_bloomberg.py",
-#         "./src/pull_CRSP_Compustat.py",
-#         "./src/pull_CRSP_stock.py",
-#         "./src/pull_fed_yield_curve.py",
-#         ]
-#     file_output = [
-#         "bloomberg.parquet",
-#         "CRSP_Compustat.parquet",
-#         "CRSP_stock.parquet",
-#         "fed_yield_curve.parquet",
-#         ]
-#     targets = [DATA_DIR / file for file in file_output]
-
-#     return {
-#         "actions": [
-#             "ipython ./src/pull_bloomberg.py",
-#             "ipython ./src/pull_CRSP_Compustat.py",
-#             "ipython ./src/pull_CRSP_stock.py",
-#             "ipython ./src/pull_fed_yield_curve.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": [],  # Don't clean these files by default.
-#     }
-
-
-# def task_summary_stats():
-#     """ """
-#     file_dep = ["./src/example_table.py"]
-#     file_output = [
-#         "example_table.tex",
-#         "pandas_to_latex_simple_table1.tex",
-#     ]
-#     targets = [OUTPUT_DIR / file for file in file_output]
-
-#     return {
-#         "actions": [
-#             "ipython ./src/example_table.py",
-#             "ipython ./src/pandas_to_latex_demo.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
-
-
-# def task_example_plot():
-#     """Example plots"""
-#     file_dep = [Path("./src") / file for file in ["example_plot.py", "pull_fred.py"]]
-#     file_output = ["example_plot.png"]
-#     targets = [OUTPUT_DIR / file for file in file_output]
-
-#     return {
-#         "actions": [
-#             # "date 1>&2",
-#             # "time ipython ./src/example_plot.py",
-#             "ipython ./src/example_plot.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
-
 def task_pull_RCON_RCOA():
     """Pull RCON and RCOA from WRDS and save to disk"""
     file_dep = [
@@ -344,61 +243,70 @@ def task_pull_MBB_data():
 # }
 
 
-# def task_convert_notebooks_to_scripts():
-#     """Convert notebooks to script form to detect changes to source code rather
-#     than to the notebook's metadata.
-#     """
-#     build_dir = Path(OUTPUT_DIR)
-
-#     for notebook in notebook_tasks.keys():
-#         notebook_name = notebook.split(".")[0]
-#         yield {
-#             "name": notebook,
-#             "actions": [
-#                 jupyter_clear_output(notebook_name),
-#                 jupyter_to_python(notebook_name, build_dir),
-#             ],
-#             "file_dep": [Path("./src") / notebook],
-#             "targets": [OUTPUT_DIR / f"_{notebook_name}.py"],
-#             "clean": True,
-#             "verbosity": 0,
-#         }
 
 
-# fmt: off
-# def task_run_notebooks():
-#     """Preps the notebooks for presentation format.
-#     Execute notebooks if the script version of it has been changed.
-#     """
-#     for notebook in notebook_tasks.keys():
-#         notebook_name = notebook.split(".")[0]
-#         yield {
-#             "name": notebook,
-#             "actions": [
-#                 """python -c "import sys; from datetime import datetime; print(f'Start """ + notebook + """: {datetime.now()}', file=sys.stderr)" """,
-#                 jupyter_execute_notebook(notebook_name),
-#                 jupyter_to_html(notebook_name),
-#                 copy_file(
-#                     Path("./src") / f"{notebook_name}.ipynb",
-#                     OUTPUT_DIR / f"{notebook_name}.ipynb",
-#                     mkdir=True,
-#                 ),
-#                 jupyter_clear_output(notebook_name),
-#                 # jupyter_to_python(notebook_name, build_dir),
-#                 """python -c "import sys; from datetime import datetime; print(f'End """ + notebook + """: {datetime.now()}', file=sys.stderr)" """,
-#             ],
-#             "file_dep": [
-#                 OUTPUT_DIR / f"_{notebook_name}.py",
-#                 *notebook_tasks[notebook]["file_dep"],
-#             ],
-#             "targets": [
-#                 OUTPUT_DIR / f"{notebook_name}.html",
-#                 OUTPUT_DIR / f"{notebook_name}.ipynb",
-#                 *notebook_tasks[notebook]["targets"],
-#             ],
-#             "clean": True,
-#         }
-# fmt: on
+notebook_tasks = {
+    "03_example.ipynb": {
+        "file_dep": [],
+        "targets": [],
+    },
+}
+
+def task_convert_notebooks_to_scripts():
+    """Convert notebooks to script form to detect changes to source code rather
+    than to the notebook's metadata.
+    """
+    build_dir = Path(OUTPUT_DIR)
+
+    for notebook in notebook_tasks.keys():
+        notebook_name = notebook.split(".")[0]
+        yield {
+            "name": notebook,
+            "actions": [
+                jupyter_clear_output(notebook_name),
+                jupyter_to_python(notebook_name, build_dir),
+            ],
+            "file_dep": [Path("./src") / notebook],
+            "targets": [OUTPUT_DIR / f"_{notebook_name}.py"],
+            "clean": True,
+            "verbosity": 0,
+        }
+
+
+
+def task_run_notebooks():
+    """Preps the notebooks for presentation format.
+    Execute notebooks if the script version of it has been changed.
+    """
+    for notebook in notebook_tasks.keys():
+        notebook_name = notebook.split(".")[0]
+        yield {
+            "name": notebook,
+            "actions": [
+                """python -c "import sys; from datetime import datetime; print(f'Start """ + notebook + """: {datetime.now()}', file=sys.stderr)" """,
+                jupyter_execute_notebook(notebook_name),
+                jupyter_to_html(notebook_name),
+                copy_file(
+                    Path("./src") / f"{notebook_name}.ipynb",
+                    OUTPUT_DIR / f"{notebook_name}.ipynb",
+                    mkdir=True,
+                ),
+                jupyter_clear_output(notebook_name),
+                # jupyter_to_python(notebook_name, build_dir),
+                """python -c "import sys; from datetime import datetime; print(f'End """ + notebook + """: {datetime.now()}', file=sys.stderr)" """,
+            ],
+            "file_dep": [
+                OUTPUT_DIR / f"_{notebook_name}.py",
+                *notebook_tasks[notebook]["file_dep"],
+            ],
+            "targets": [
+                OUTPUT_DIR / f"{notebook_name}.html",
+                OUTPUT_DIR / f"{notebook_name}.ipynb",
+                *notebook_tasks[notebook]["targets"],
+            ],
+            "clean": True,
+        }
+
 
 
 # ###############################################################

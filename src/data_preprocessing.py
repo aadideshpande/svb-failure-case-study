@@ -1,9 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def missing_data_analysis(dfs, dataset_names=None, show_plot=True):
     """
     Analyze missing data for multiple DataFrames.
@@ -51,5 +48,167 @@ def missing_data_analysis(dfs, dataset_names=None, show_plot=True):
         plt.tight_layout()
         plt.show()
 
-    # return missing_summaries
+def clean_sp_treasury_data(sp_treasury_data):
+    """
+    Cleans the S&P U.S. Treasury Bond Index data.
+    
+    Steps:
+    1. Strips whitespace from column names.
+    2. Renames 'Effective date' to 'date' and converts it to datetime.
+    3. Renames 'S&P U.S. Treasury Bond Index' to 'treasury_index' for consistency.
+    4. Sorts the data by date to ensure time-series continuity.
+    5. Drops any duplicate rows if they exist.
+    6. Handles any missing values by forward-filling (if necessary).
+    
+    Args:
+    - sp_treasury_data (pd.DataFrame): Raw S&P Treasury Index data.
+    
+    Returns:
+    - pd.DataFrame: Cleaned S&P Treasury Index data.
+    """
+    
+    # Step 1: Standardize column names
+    sp_treasury_data.rename(columns=lambda x: x.strip(), inplace=True)
 
+    # Step 2: Rename key columns
+    sp_treasury_data.rename(columns={
+        'Effective date': 'date',
+        'S&P U.S. Treasury Bond Index': 'treasury_index'
+    }, inplace=True)
+
+    # Step 3: Convert 'date' to datetime format
+    sp_treasury_data['date'] = pd.to_datetime(sp_treasury_data['date'])
+
+    # Step 4: Sort data by date (ensures proper time-series order)
+    sp_treasury_data.sort_values(by='date', inplace=True)
+
+    # Step 5: Drop duplicate rows if any exist
+    sp_treasury_data.drop_duplicates(inplace=True)
+
+    # Step 6: Handle missing values (forward-fill to maintain continuity)
+    sp_treasury_data.fillna(method='ffill', inplace=True)
+
+    print("✅ S&P Treasury Bond Index data cleaned successfully!")
+    return sp_treasury_data
+
+# Example usage (assuming sp_treasury_data is already loaded)
+# cleaned_sp_treasury_data = clean_sp_treasury_data(sp_treasury_data)
+
+import pandas as pd
+
+def clean_and_merge_rcon_rcfd(rcon1, rcon2, rcfd1, rcfd2):
+    """
+    Cleans and merges RCON and RCFD datasets to produce a single structured dataset.
+    
+    Arguments:
+    - rcon1: DataFrame from pull_RCON_series_1
+    - rcon2: DataFrame from pull_RCON_series_2
+    - rcfd1: DataFrame from pull_RCFD_series_1
+    - rcfd2: DataFrame from pull_RCFD_series_2
+    
+    Returns:
+    - Merged DataFrame containing relevant columns from both RCON and RCFD.
+    """
+
+    # Standardize column names to lowercase for consistency
+    rcon1.columns = rcon1.columns.str.lower()
+    rcon2.columns = rcon2.columns.str.lower()
+    rcfd1.columns = rcfd1.columns.str.lower()
+    rcfd2.columns = rcfd2.columns.str.lower()
+
+    # Merge RCON datasets
+    rcon_combined = pd.merge(rcon1, rcon2, on=['rssd9001', 'rssd9017', 'rssd9999'], how='outer')
+
+    # Merge RCFD datasets
+    rcfd_combined = pd.merge(rcfd1, rcfd2, on=['rssd9001', 'rssd9017', 'rssd9999'], how='outer')
+
+    # Merge RCON and RCFD datasets
+    final_dataset = pd.merge(rcon_combined, rcfd_combined, on=['rssd9001', 'rssd9017', 'rssd9999'], how='outer')
+
+    # Convert date column to datetime format
+    final_dataset['rssd9999'] = pd.to_datetime(final_dataset['rssd9999'])
+
+    # Filter for Q1 2022 (January 1, 2022 - March 31, 2022)
+    q1_2022_data = final_dataset[
+        (final_dataset['rssd9999'] >= "2022-01-01") & 
+        (final_dataset['rssd9999'] <= "2023-03-31")
+    ]
+
+    # Drop duplicates (if any)
+    q1_2022_data = q1_2022_data.drop_duplicates()
+
+    print("✅ Final dataset cleaned and merged successfully!")
+    return q1_2022_data
+
+
+def get_total_asset(rcfd_series_2, rcon_series_2, report_date = '03/31/2022'):
+    """
+    This function takes in the rcfd and rcon series and returns the total asset data for the given report date.
+
+    Args:
+    rcfd_series_2 (pd.DataFrame): rcfd series data
+    rcon_series_2 (pd.DataFrame): rcon series data
+
+    Returns:
+    df_asset (pd.DataFrame): Total asset data for the given report date
+    
+    """
+
+    #This grabs the
+    asset_level_domestic_foriegn = rcfd_series_2[['rssd9001','rssd9017','rssd9999','rcfd2170']]
+    asset_level_domestic = rcon_series_2[['rssd9001','rssd9017','rssd9999','rcon2170']]
+
+    #drop the rows with missing values
+    asset_level_domestic_foriegn.dropna(inplace = True)
+    asset_level_domestic.dropna(inplace = True)
+
+    filtered_asset_level_domestic_foriegn = asset_level_domestic_foriegn[asset_level_domestic_foriegn['rssd9999'] == report_date]
+    filtered_asset_level_domestic = asset_level_domestic[asset_level_domestic['rssd9999'] == report_date]
+
+    filtered_asset_level_domestic_foriegn  = filtered_asset_level_domestic_foriegn.rename(columns={
+    'rcfd2170': 'Total Asset'})
+
+    filtered_asset_level_domestic  = filtered_asset_level_domestic.rename(columns={
+    'rcon2170': 'Total Asset'})
+
+    # Concatenate the two dataframes
+    df_asset = pd.concat([filtered_asset_level_domestic_foriegn, filtered_asset_level_domestic])
+
+    df_asset = df_asset[['rssd9001','rssd9017','Total Asset']]
+
+    df_asset  = df_asset.rename(columns={
+    'rssd9001': 'Bank_ID',
+    'rssd9017': 'bank_name',
+    'rssd9999': 'report_date',
+    'Total Asset': 'gross_asset',
+    })
+
+    return df_asset
+
+def filter_data(df, start_date, end_date):
+    df_filtered = df[
+        (df['date'] >= start_date) &
+        (df['date'] <= end_date)
+    ]
+    df_filtered['date'] = pd.to_datetime(df_filtered['date'])
+    # Define required dates
+    required_dates = [pd.Timestamp("2022-03-31"), pd.Timestamp("2023-03-31")]
+    df_filtered['rssd9001'] = df_filtered['rssd9001'].astype(str)
+    # Group by 'rssd9001' and filter out groups that do not contain both required dates
+    df_filtered = df_filtered.groupby('rssd9001').filter(lambda x: all(date in x['date'].values for date in required_dates))
+    return df_filtered
+
+def preprocess_treasuries_data(df: pd.DataFrame):
+    df.rename(columns=lambda x: x.strip(), inplace=True)
+    df['Effective date'] = pd.to_datetime(df['Effective date'])
+    df.rename(columns={
+        'Effective date': 'date',
+        'S&P U.S. Treasury Bond Index': 'index'
+    }, inplace=True)
+    return df
+
+def get_partitioned_data(df, gsib, large, small):
+    df_gsib = df[df['rssd9001'].isin(gsib)]
+    df_large = df[df['rssd9001'].isin(large)]
+    df_small = df[df['rssd9001'].isin(small)]
+    return df_gsib, df_large, df_small
