@@ -336,10 +336,12 @@ def task_compile_latex_docs():
     #     "./src/example_table.py",
     # ]
     file_dep = [
+        "./reports/summary_report.tex",
         "./reports/data_report.tex",
         "./reports/replication_report.tex"
     ]
     targets = [
+        "./reports/summary_report.pdf",
         "./reports/data_report.pdf",
         "./reports/replication_report.pdf",
     ]
@@ -347,6 +349,8 @@ def task_compile_latex_docs():
     return {
         "actions": [
             # My custom LaTeX templates
+            "latexmk -xelatex -halt-on-error -cd ./reports/summary_report.tex",  # Compile
+            "latexmk -xelatex -halt-on-error -c -cd ./reports/summary_report.tex",  # Clean
             "latexmk -xelatex -halt-on-error -cd ./reports/data_report.tex",  # Compile
             "latexmk -xelatex -halt-on-error -c -cd ./reports/data_report.tex",  # Clean
             "latexmk -xelatex -halt-on-error -cd ./reports/replication_report.tex",  # Compile

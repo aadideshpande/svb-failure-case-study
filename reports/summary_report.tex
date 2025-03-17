@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+\title{Mark-to-Market Losses and Bank Fragility}
+\author{Summarized from the Research Paper}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This document summarizes key findings from the research paper concerning the effects of monetary tightening on U.S. banks, focusing on mark-to-market losses and their implications on financial stability.
+
+\section{Mark-to-Market Losses}
+The study evaluates the impact of rising interest rates from Q1 2022 to Q1 2023 on bank asset values. Since bank call reports do not reflect real-time market values, a mark-to-market approach is employed. The findings reveal:
+
+\begin{itemize}
+    \item An aggregate asset loss of approximately \$2.2 trillion, representing a 10\% decline.
+    \item Bank assets, particularly long-duration securities such as RMBS, Treasury bonds, and other fixed-income instruments, suffered significant devaluations.
+    \item The loss distribution varied by bank size, with non-GSIB banks experiencing the highest percentage of asset declines.
+\end{itemize}
+
+Mark-to-market losses are crucial in understanding bank solvency since they determine the actual financial strength of institutions beyond their book values.
+
+\section{Mark-to-Market Calculation Formulas}
+The mark-to-market loss calculations are based on the price change in assets due to shifts in market interest rates. The primary formulas used are:
+
+\begin{itemize}
+    \item \textbf{Market Value of Asset (MVA)}: 
+    \begin{equation}
+        MVA = \frac{C}{(1+r)^1} + \frac{C}{(1+r)^2} + ... + \frac{F}{(1+r)^n}
+    \end{equation}
+    Where:
+    \begin{itemize}
+        \item \( C \) = Coupon payments
+        \item \( r \) = Discount rate (Market yield)
+        \item \( F \) = Face value of the bond
+        \item \( n \) = Number of periods to maturity
+    \end{itemize}
+    
+    \item \textbf{Mark-to-Market Loss (MTM Loss)}:
+    \begin{equation}
+        MTM\_Loss = \mathrm{Book\ Value} - \mathrm{Market\ Value\ of\ Asset\ (MVA)}
+    \end{equation}
+    
+    \item \textbf{Percentage Loss Relative to Total Assets}:
+    \begin{equation}
+        \text{Loss\_Percentage} = \frac{MTM\_Loss}{\text{Total Assets}} \times 100
+    \end{equation}
+\end{itemize}
+
+These formulas illustrate how interest rate fluctuations affect asset valuation and contribute to overall financial instability.
+
+\section{Bank Asset Composition}
+Table 1 of the research paper presents descriptive statistics on bank asset values post-marking to market. The dataset is categorized into:
+
+\begin{itemize}
+    \item \textbf{Small Banks} (assets below \$1.384 billion)
+    \item \textbf{Large Non-GSIB Banks} (assets above \$1.384 billion, but not GSIBs)
+    \item \textbf{GSIB Banks} (classified as per regulatory definitions)
+\end{itemize}
+
+The study decomposes bank losses into categories such as RMBS, Treasuries, and other loan types, highlighting their relative contributions to total asset devaluation.
+
+\section{Bank Liabilities and Equity}
+Panel B of the research reports the composition of bank liabilities and equity as of Q1 2022:
+
+\begin{itemize}
+    \item \textbf{Insured Deposits}: Comprising 41\% of total funding.
+    \item \textbf{Uninsured Deposits}: About 37\% of total bank funding, with \$9 trillion in uninsured deposits.
+    \item \textbf{Other Liabilities}: Includes borrowings and financial obligations.
+    \item \textbf{Equity}: Accounting for 9.5\% of total liabilities.
+\end{itemize}
+
+\section{Conclusion}
+The research underscores the vulnerability of U.S. banks to rising interest rates and subsequent asset devaluation. The reliance on uninsured deposits increases systemic risk, as observed in cases like SVB. These findings highlight the necessity for enhanced risk management strategies and regulatory oversight to mitigate potential banking crises.
+
+\end{document}
