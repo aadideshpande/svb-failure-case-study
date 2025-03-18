@@ -26,4 +26,4 @@ def test_load_from_manual_excel():
     expected_columns = 2  # Replace with the actual expected number of columns
     
     assert df.shape[0] > 0, "DataFrame has no rows"
-    assert df.shape[1] == expected_columns, f"Expected {expected_columns} columns, but got {df.shape[1]}"
+    assert df.shape[1] == expected_columns, f"Expected {expected_columns} columns, but got {df.shape[1]}" 
